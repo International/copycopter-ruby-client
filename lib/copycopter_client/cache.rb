@@ -8,6 +8,10 @@ module CopycopterClient
   #
   # Responsible for locking down access to data used by both threads.
   class Cache
+
+    attr_accessor :after_download_hook
+
+
     # Usually instantiated when {Configuration#apply} is invoked.
     # @param client [Client] the client used to fetch and upload data
     # @param options [Hash]
@@ -106,6 +110,11 @@ module CopycopterClient
       logger.error error.message
     ensure
       @downloaded = true
+
+      if @after_download_hook
+        @after_download_hook.call
+      end
+
     end
 
     # Downloads and then flushes
